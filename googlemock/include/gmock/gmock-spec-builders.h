@@ -1260,7 +1260,10 @@ class MockSpec {
       const char* file, int line, const char* obj, const char* call) {
     LogWithLocation(internal::kInfo, file, line,
         string("ON_CALL(") + obj + ", " + call + ") invoked");
-    return function_mocker_->AddNewOnCallSpec(file, line, matchers_);
+	ArgumentMatcherTuple tmp = matchers_;
+	matchers_ = ArgumentMatcherTuple();
+	return function_mocker_->AddNewOnCallSpec(file, line, tmp);
+    //return function_mocker_->AddNewOnCallSpec(file, line, matchers_);
   }
 
   // Adds a new expectation spec to the function mocker and returns
@@ -1269,8 +1272,10 @@ class MockSpec {
       const char* file, int line, const char* obj, const char* call) {
     const string source_text(string("EXPECT_CALL(") + obj + ", " + call + ")");
     LogWithLocation(internal::kInfo, file, line, source_text + " invoked");
+	ArgumentMatcherTuple tmp = matchers_;
+	matchers_ = ArgumentMatcherTuple();
     return function_mocker_->AddNewExpectation(
-        file, line, source_text, matchers_);
+        file, line, source_text, tmp);
   }
 
  private:
